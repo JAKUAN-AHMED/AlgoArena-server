@@ -20,7 +20,7 @@ app.get('/',(req,res)=>{
 
 
 const uri =
-  "mongodb+srv://AlgoMaster:XDwbKUIqv6TgoEp7@cluster0.z5rmhar.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0";
+  `mongodb+srv://${process.env.DB_USER}:${process.env.DB_PASS}@cluster0.z5rmhar.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0`;
 
 // Create a MongoClient with a MongoClientOptions object to set the Stable API version
 const client = new MongoClient(uri, {
