@@ -1,6 +1,7 @@
 const express = require('express');
 const cors = require('cors');
 require('dotenv').config();
+const jwt=require('jsonwebtoken');
 const { MongoClient, ServerApiVersion } = require("mongodb");
 
 const app=express();
@@ -10,15 +11,9 @@ const port=process.env.PORT || 5000;
 app.use(express.json());
 app.use(cors())
 
-app.get('/',(req,res)=>{
-    res.send('hello world!');
-})
+
 
 //database
-
-
-
-
 const uri =
   `mongodb+srv://${process.env.DB_USER}:${process.env.DB_PASS}@cluster0.z5rmhar.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0`;
 
@@ -33,10 +28,36 @@ const client = new MongoClient(uri, {
 
 async function run() {
   try {
-    // Connect the client to the server	(optional starting in v4.7)
     await client.connect();
-    // Send a ping to confirm a successful connection
-    // await client.db("admin").command({ ping: 1 });
+    const userCollection=client.db('AlgoArena').collection('users');
+
+    app.get('/',(req,res)=>{
+        res.send('hello world!')
+    })
+    //jwt api
+    app.post('/jwt',async(req,res)=>{
+        const user=req.body
+        const token=jwt.sign(user,process.env.ACCESS_SECRET_TOKEN,{
+            expiresIn:'1h',
+        })
+        // console.log('token generated = ',token);
+        res.send({token})
+    })
+
+
+    // all users api
+    app.post('/users',async(req,res)=>{
+        const user=req.body;
+        const result=await userCollection.insertOne(user);
+        res.send(result);
+    })
+
+    //get users
+    app.get('/users',async(req,res)=>{
+        const result=await userCollection.find().toArray();
+        res.send(result);
+    })
+
     console.log(
       "You successfully connected to MongoDB!"
     );
