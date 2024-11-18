@@ -9,12 +9,6 @@ const axios = require("axios");
 const app = express();
 const port = process.env.PORT || 5000;
 
-
-// const corsOptions = {
-//   origin: ["https://algoarena-930d5.web.app", "http://localhost:5173"],
-//   methods: ["GET", "POST", "PUT", "PATCH", "DELETE"],
-//   credentials: true, // Allow cookies if needed
-// };
 // Middleware
 app.use(express.json());
 app.use(cors());
@@ -355,7 +349,7 @@ async function run() {
             }
           );
           res.redirect(
-            `https://algoarena-930d5.web.app/success/${req.params.tranId}`
+            `http://localhost:5173/payment/success/${req.params.tranId}`
           );
         }
       });
@@ -366,7 +360,7 @@ async function run() {
         });
         if (result.modifiedCount > 0) {
           res.redirect(
-            `https://algoarena-930d5.web.app/payment/fail/${req.params.tranId}`
+            `http://localhost:5173/payment/fail/${req.params.tranId}`
           );
         }
       });
