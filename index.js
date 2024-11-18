@@ -251,16 +251,15 @@ async function run() {
       res.send(result);
     });
 
-   app.patch("/contests/confirm/:id", async (req, res) => {
-     const id = req.params.id;
-     const result = await contestCollection.updateOne(
-       { _id: new ObjectId(id) },
-       { $set: { status: "success" } }
-     );
+    app.patch("/contests/confirm/:id", async (req, res) => {
+      const id = req.params.id;
+      const result = await contestCollection.updateOne(
+        { _id: new ObjectId(id) },
+        { $set: { status: "success" } }
+      );
 
-     res.send(result);
-   });
-
+      res.send(result);
+    });
 
     //contest delete
     app.delete("/contests/delete/:id", async (req, res) => {
@@ -277,8 +276,7 @@ async function run() {
     //payment-history api
     app.post("/payment-history", async (req, res) => {
       const { name, email, email1, contestId, entryFee } = req.body;
-      let Id =ObjectId.createFromHexString(contestId);
-      console.log('Id',Id);
+      let Id = ObjectId.createFromHexString(contestId);
       const contest = await contestCollection.findOne(Id);
       const tran_id = new ObjectId().toString();
 
@@ -332,9 +330,10 @@ async function run() {
 
       //payment-success
       app.post("/payment/success/:tranId", async (req, res) => {
-        console.log("id", req.params.tranId);
-        const contest_Id=await paymentCollection.findOne({transactionId:req.params.tranId});
-        console.log("contest id",contest_Id.contestId);
+        const contest_Id = await paymentCollection.findOne({
+          transactionId: req.params.tranId,
+        });
+
         const result = await paymentCollection.updateOne(
           {
             transactionId: req.params.tranId,
@@ -343,7 +342,7 @@ async function run() {
         );
         if (result.modifiedCount > 0) {
           const result = await contestCollection.updateOne(
-            { _id:ObjectId.createFromHexString(contest_Id.contestId) },
+            { _id: ObjectId.createFromHexString(contest_Id.contestId) },
             {
               $inc: { participant: 1 },
             }
@@ -372,31 +371,18 @@ async function run() {
       res.send(result);
     });
 
-    //submit task
-    // Route to get payment history by _id (optional, if needed)
-    // app.get("/payment-history/:id", async (req, res) => {
-    //   const id = req.params.id;
-    //   const query = { _id: new ObjectId(id) };
-    //   const result = await paymentCollection.findOne(query);
-    //   res.send(result);
-    // });
 
     // Route to update payment by transactionId
     app.patch("/payment-history/:transactionId", async (req, res) => {
-      const {transactionId } = req.params;
-      console.log("transaction", transactionId);
+      const { transactionId } = req.params;
       const { pdfLink } = req.body;
-      console.log(pdfLink);
-      const query={transactionId:transactionId};
-      const result=await paymentCollection.findOne(query);
-      console.log(result._id);
+      const query = { transactionId: transactionId };
+      const result = await paymentCollection.findOne(query);
 
       const result1 = await paymentCollection.updateOne(
         { _id: result._id },
         { $set: { pdfLink: pdfLink } }
       );
-      const result3=await paymentCollection.findOne(query)
-      console.log(result3);
       res.send(result1);
     });
 
@@ -420,7 +406,6 @@ async function run() {
         // Send the contests as response
         res.json(contests);
       } catch (error) {
-        console.error("Error fetching contests:", error);
         res.status(500).json({ error: "Internal Server Error" });
       }
     });
@@ -428,34 +413,32 @@ async function run() {
     // Get submitted payment-info by user email
     app.get("/payment-history/emailData/email", async (req, res) => {
       const email = req.query?.email;
-      console.log(email);
+
       const query = { author: email };
       const paymentHistory = await paymentCollection.find(query).toArray();
       res.send(paymentHistory);
     });
 
-
     //declare winner
-    app.patch("/contests/updateWinner/:id",async(req,res)=>{
-      console.log("req",req.params.id);
-      const result=await contestCollection.updateOne(
-        {_id:new ObjectId(req.params.id)},
-        {$set:{
-          isWinner:true
-        }}
-      )
-      res.send(result)
-    })
-
+    app.patch("/contests/updateWinner/:id", async (req, res) => {
+      const result = await contestCollection.updateOne(
+        { _id: new ObjectId(req.params.id) },
+        {
+          $set: {
+            isWinner: true,
+          },
+        }
+      );
+      res.send(result);
+    });
 
     //user contests
-    app.get("/usercontests/email",async(req,res)=>{
-      // console.log(req.query.email);
-      const result=await paymentCollection.find(
-        {email:req.query.email}
-      ).toArray();
+    app.get("/usercontests/email", async (req, res) => {
+      const result = await paymentCollection
+        .find({ email: req.query.email })
+        .toArray();
       res.send(result);
-    })
+    });
   } finally {
     // Close connection when the application ends
     // await client.close();
