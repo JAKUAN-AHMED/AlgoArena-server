@@ -366,7 +366,7 @@ async function run() {
         });
         if (result.modifiedCount > 0) {
           res.redirect(
-            `http://localhost:5173/payment/fail/${req.params.tranId}`
+            `https://algoarena-930d5.web.app/payment/fail/${req.params.tranId}`
           );
         }
       });
