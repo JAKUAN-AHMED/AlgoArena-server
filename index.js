@@ -355,7 +355,7 @@ async function run() {
             }
           );
           res.redirect(
-            `http://localhost:5173/payment/success/${req.params.tranId}`
+            `https://algoarena-930d5.web.app/success/${req.params.tranId}`
           );
         }
       });
