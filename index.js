@@ -433,6 +433,29 @@ async function run() {
       const paymentHistory = await paymentCollection.find(query).toArray();
       res.send(paymentHistory);
     });
+
+
+    //declare winner
+    app.patch("/contests/updateWinner/:id",async(req,res)=>{
+      console.log("req",req.params.id);
+      const result=await contestCollection.updateOne(
+        {_id:new ObjectId(req.params.id)},
+        {$set:{
+          isWinner:true
+        }}
+      )
+      res.send(result)
+    })
+
+
+    //user contests
+    app.get("/usercontests/email",async(req,res)=>{
+      // console.log(req.query.email);
+      const result=await paymentCollection.find(
+        {email:req.query.email}
+      ).toArray();
+      res.send(result);
+    })
   } finally {
     // Close connection when the application ends
     // await client.close();
