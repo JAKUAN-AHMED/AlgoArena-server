@@ -13,7 +13,7 @@ const port = process.env.PORT || 5000;
 const corsOptions = {
   origin: ["https://algoarena-930d5.web.app", "http://localhost:5173"],
   methods: ["GET", "POST", "PUT", "PATCH", "DELETE"],
-  // credentials: true, // Allow cookies if needed
+  credentials: true, // Allow cookies if needed
 };
 // Middleware
 app.use(express.json());
